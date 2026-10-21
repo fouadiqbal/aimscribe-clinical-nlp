@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+models/
+runtime/
+tmp/
+.streamlit/secrets.toml
+data/index/
+*.log

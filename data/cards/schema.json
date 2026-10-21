@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AIMScribe recommendation card",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["card_id", "disease", "category", "retrieval_cues", "recommended_action", "decision_rule", "required_fields", "medication", "source", "evidence", "interpretation_notes", "review_status"],
+  "properties": {
+    "card_id": {"type": "string", "pattern": "^[A-Z]{3}-[A-Z]{2,3}-[0-9]{2}$"},
+    "disease": {"enum": ["dengue", "hypertension", "cholera", "chikungunya"]},
+    "category": {"enum": ["probable_diagnosis", "investigation", "medication", "advice", "referral_warning"]},
+    "retrieval_cues": {"type": "string", "minLength": 1},
+    "recommended_action": {"type": "string", "minLength": 1},
+    "decision_rule": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/rule"}]},
+    "required_fields": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "medication": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "dose", "route", "frequency", "duration", "instructions"],
+      "properties": {
+        "name": {"type": ["string", "null"]}, "dose": {"type": ["string", "null"]},
+        "route": {"type": ["string", "null"]}, "frequency": {"type": ["string", "null"]},
+        "duration": {"type": ["string", "null"]}, "instructions": {"type": ["string", "null"]}
+      }
+    },
+    "source": {"type": "object", "required": ["title", "version", "file"], "additionalProperties": false,
+      "properties": {"title": {"type": "string"}, "version": {"type": "string"}, "file": {"type": "string"}}},
+    "evidence": {"type": "array", "minItems": 1, "items": {
+      "type": "object", "required": ["pdf_page", "passage", "method"], "additionalProperties": false,
+      "properties": {"pdf_page": {"type": "integer", "minimum": 1}, "passage": {"type": "string", "minLength": 1},
+        "method": {"enum": ["extracted_text", "visual_transcription"]}, "transcription_key": {"type": "string"}}
+    }},
+    "interpretation_notes": {"type": "string"},
+    "review_status": {"enum": ["draft_requires_candidate_review", "candidate_verified"]}
+  },
+  "$defs": {"rule": {"oneOf": [
+    {"type": "object", "required": ["field", "op", "value"], "additionalProperties": false,
+      "properties": {"field": {"type": "string"}, "op": {"enum": ["eq", "lt", "lte", "gt", "gte", "contains"]}, "value": {"type": ["number", "string", "boolean"]}}},
+    {"type": "object", "required": ["all"], "additionalProperties": false, "properties": {"all": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/rule"}}}},
+    {"type": "object", "required": ["any"], "additionalProperties": false, "properties": {"any": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/rule"}}}},
+    {"type": "object", "required": ["not"], "additionalProperties": false, "properties": {"not": {"$ref": "#/$defs/rule"}}},
+    {"type": "object", "required": ["at_least", "rules"], "additionalProperties": false,
+      "properties": {"at_least": {"type": "integer", "minimum": 1}, "rules": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/rule"}}}}
+  ]}}
+}
