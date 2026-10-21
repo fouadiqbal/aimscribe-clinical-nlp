@@ -7,3 +7,5 @@ Deploy repository branch `master` with **Main file path** `cloud/app.py`. The `c
 The first request downloads about 1.2 GB and can take several minutes. Subsequent requests are faster while the container remains awake. The free service has limited CPU and memory, so a cold start can be slow or exceed its resource limit. The app is for fictional educational cases only; it has no login or patient-data controls and must not receive real patient information.
 
 The app may hibernate when idle; open its Streamlit URL to wake it. For a presentation, warm the app with a fictional case before the interview. If inference exceeds memory, fails to build, or remains too slow, present the verified local version from `Open_AIMScribe.cmd` and describe cloud deployment as a limitation rather than claiming the online app works.
+
+Current check (22 October 2026): Community Cloud installs dependencies and starts its server, but the browser page remains on the loading spinner. Treat the public app as unavailable until the form renders and a fictional case completes successfully. The local launcher is the verified demo path.
