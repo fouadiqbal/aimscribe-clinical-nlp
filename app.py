@@ -44,7 +44,7 @@ BOOL_FIELDS = {
     "skin_pinch_slow":"Skin pinch returns slowly",
 }
 
-with st.form("patient"):
+with st.form("patient_form"):
     complaint=st.text_area("Chief complaints and symptoms",placeholder="Describe symptoms, findings and their course. A disease name is not required.")
     columns=st.columns(2)
     age=columns[0].text_input("Age (years; blank if unknown)")
