@@ -4,6 +4,8 @@ This entry point uses the same 34 cards, embeddings, applicability checker, Qwen
 
 Deploy repository branch `master` with **Main file path** `cloud/app.py`. The `cloud/requirements.txt` file keeps the cloud environment dependencies beside that entry point. The data card file, exact cosine index (`data/index/`) and shared Python modules must be included in the repository. Do not commit model weights, runtime downloads, secrets, or the full assessment archive.
 
+The current Cloud dependency file targets the deployed Linux x64 / Python 3.14 environment. It uses Streamlit 1.52.0 and a direct SHA256-pinned official PyTorch 2.14.1 CPU wheel to avoid resolving unrelated packages through the PyTorch index. The Windows/local requirements remain separate. Changing the Cloud Python version requires updating the wheel tag.
+
 The first request downloads about 1.2 GB and can take several minutes. Subsequent requests are faster while the container remains awake. The free service has limited CPU and memory, so a cold start can be slow or exceed its resource limit. The app is for fictional educational cases only; it has no login or patient-data controls and must not receive real patient information.
 
 The app may hibernate when idle; open its Streamlit URL to wake it. For a presentation, warm the app with a fictional case before the interview. If inference exceeds memory, fails to build, or remains too slow, present the verified local version from `Open_AIMScribe.cmd` and describe cloud deployment as a limitation rather than claiming the online app works.
