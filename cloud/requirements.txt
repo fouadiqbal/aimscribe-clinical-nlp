@@ -1,6 +1,5 @@
---extra-index-url https://download.pytorch.org/whl/cpu
 streamlit==1.52.0
-torch==2.14.1+cpu
+torch @ https://download-r2.pytorch.org/whl/cpu/torch-2.14.1%2Bcpu-cp314-cp314-manylinux_2_28_x86_64.whl#sha256=35103e180214793207f95d7e12e100ecba3ace6f5fb37e1fcefbb07e096ed180
 pyarrow<25
 sentence-transformers==6.1.0
 numpy==2.5.4
