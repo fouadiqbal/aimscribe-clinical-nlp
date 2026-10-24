@@ -10,4 +10,4 @@ On the first submitted fictional case, the app downloads the pinned Qwen 1.5B qu
 
 See `cloud/README.md` for model details and troubleshooting. For the prepared Windows computer, use `Open_AIMScribe.cmd` and the local model.
 
-The public Cloud deployment is [AIMScribe on Streamlit](https://aimscribe-clinical-nlp-fbfmk4svhrd9kqxfbamuow.streamlit.app/). Its container starts, but the page is currently stuck on Streamlit's loading spinner, so the hosted demo is not yet verified as usable. Use the local launcher for demonstrations until the hosted page renders and a fictional inference is checked.
+The public deployment is [AIMScribe on Streamlit](https://aimscribe-clinical-nlp-fbfmk4svhrd9kqxfbamuow.streamlit.app/). On 24 October 2026, an improved-mode fictional case completed in 100.6 seconds with downloadable JSON and no structural validation errors. It runs independently of the Windows laptop and uses no paid model API. Free hosting can sleep or restart; allow cold-start time. Duplicate recommendations and repetitive questions remain: execution verification is not clinical validation. Keep the local launcher as an interview backup.
