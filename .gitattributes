@@ -1,0 +1,3 @@
+# Preserve the exact source-card bytes used to build the frozen vector index.
+# Git line-ending conversion otherwise breaks the provenance hash on Linux.
+data/cards/cards.jsonl -text
