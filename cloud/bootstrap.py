@@ -1,5 +1,5 @@
 """Start the same pinned, free Qwen/llama.cpp CPU stack on Community Cloud."""
-from functools import lru_cache
+from threading import Lock
 import hashlib
 import os
 from pathlib import Path
@@ -16,6 +16,7 @@ RUNTIME_SHA256 = "e5ae13aa4d614cc4e4165a74ae2781e592b54153017a0af922ce3b4cab67b1
 MODEL_URL = "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_k_m.gguf"
 MODEL_SHA256 = "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e"
 CACHE = Path.home() / ".cache" / "aimscribe"
+_START_LOCK = Lock()
 
 
 def _download(url, destination, expected_sha256):
@@ -40,8 +41,13 @@ def _download(url, destination, expected_sha256):
             partial.unlink()
 
 
-@lru_cache(maxsize=1)
 def ensure_model_server():
+    # Check health on every case: caching a successful startup hides later exits.
+    with _START_LOCK:
+        _ensure_model_server()
+
+
+def _ensure_model_server():
     """Download on first patient case, reuse process for later interactions."""
     import urllib.error
     import urllib.request
@@ -57,7 +63,7 @@ def ensure_model_server():
         model = CACHE / "qwen2.5-1.5b-instruct-q4_k_m.gguf"
         runtime_archive = CACHE / "llama-b11786-ubuntu-x64.tar.gz"
         runtime_dir = CACHE / "llama-b11786"
-        binary = runtime_dir / "llama-server"
+        binary = next(iter(runtime_dir.rglob("llama-server")), runtime_dir / "llama-server")
         _download(RUNTIME_URL, runtime_archive, RUNTIME_SHA256)
         runtime_dir.mkdir(parents=True, exist_ok=True)
         if not binary.exists():
@@ -77,11 +83,13 @@ def ensure_model_server():
 
         environment = os.environ.copy()
         environment["LD_LIBRARY_PATH"] = str(binary.parent) + os.pathsep + environment.get("LD_LIBRARY_PATH", "")
-        subprocess.Popen([str(binary), "-m", str(model), "--host", "127.0.0.1", "--port", "8080",
+        process = subprocess.Popen([str(binary), "-m", str(model), "--host", "127.0.0.1", "--port", "8080",
                           "-c", "4096", "-t", "2", "-ngl", "0", "--parallel", "1"],
                          cwd=binary.parent, env=environment, stdout=subprocess.DEVNULL,
                          stderr=subprocess.STDOUT, start_new_session=True)
         for _ in range(240):
+            if process.poll() is not None:
+                raise RuntimeError(f"The cloud model exited during startup (code {process.returncode}). Check available memory and the pinned runtime compatibility.")
             try:
                 with urllib.request.urlopen(health, timeout=2) as response:
                     if response.status == 200:

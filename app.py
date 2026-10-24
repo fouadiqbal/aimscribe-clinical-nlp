@@ -137,7 +137,9 @@ if "result" in st.session_state:
                     st.caption("Model's patient-specific reason: "+item["reason"])
                     if section=="medication_plan":
                         st.table({"Field":list(item["medication"]),"Source value":[v or "Not stated in source" for v in item["medication"].values()]})
-                    st.caption(f"{item['card_id']} · {item['source']['title']} · PDF pages "+", ".join(map(str,sorted({e['pdf_page'] for e in item['evidence']}))))
+                    st.caption(f"{item['card_id']} · {item['source']['title']} · {item['source']['version']} · PDF pages "+", ".join(map(str,sorted({e['pdf_page'] for e in item['evidence']}))))
+                    if item['card_id'] in {'DEN-DX-01', 'CHO-DX-01'}:
+                        st.info("Source-review note: this card's suspected/probable terminology needs review. The cited clinical case definition does not by itself establish a formal probable diagnosis. The original experimental wording is preserved.")
         st.subheader("Missing information")
         for question in output["missing_information"]:
             st.write("• "+question)
